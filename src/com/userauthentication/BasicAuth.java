@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.userregistration.User;
+import com.userregistration.ValidationException;
 
 public class BasicAuth implements Authentication {
 	private List<User> registeredUsers = new ArrayList<>();
@@ -15,10 +16,12 @@ public class BasicAuth implements Authentication {
     }
 
     @Override
-    public Optional<User> login(String email, String password) {
+    public Optional<User> login(String email, String password) throws ValidationException {
 
-        for (User user : registeredUsers) {
-            if (user.getEmail().equals(email) 
+        List<User> users = User.loadUsersFromFile();
+
+        for (User user : users) {
+            if (user.getEmail().equals(email)
                     && user.checkPassword(password)) {
 
                 SessionManager.getInstance().createSession(user);
@@ -28,7 +31,7 @@ public class BasicAuth implements Authentication {
 
         return Optional.empty();
     }
-
+    
     @Override
     public void logout(User user) {
         SessionManager.getInstance().destroySession(user);

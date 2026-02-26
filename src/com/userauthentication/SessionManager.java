@@ -13,7 +13,7 @@ public class SessionManager {
     private SessionManager() {
         activeSessions = new HashMap<>();
     }
-
+// singleton pattern 
     public static SessionManager getInstance() {
         if (instance == null) {
             instance = new SessionManager();

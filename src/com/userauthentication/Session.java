@@ -4,7 +4,7 @@ import com.userregistration.User;
 import java.time.LocalDateTime;
 
 public class Session {
-
+	// Creates a session at a particular time
     private User user;
     private LocalDateTime loginTime;
 
