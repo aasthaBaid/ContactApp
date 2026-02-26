@@ -1,42 +1,52 @@
 package com.userregistration;
 
+import java.util.Optional;
+
+import com.userauthentication.BasicAuth;
+import com.userauthentication.Authentication;
+
 public class Main {
-	public static void main(String[] args) {
-		try {
 
-			// Registration
-			User user1 = new FreeUser(
-					"john@example.com",
-					"password123",
-					"John",
-					"1234567890");
+    public static void main(String[] args) {
 
-			User user2 = new PremiumUser(
-					"alice@example.com",
-					"secure456",
-					"Alice",
-					"2345678901");
+        try {
 
-			System.out.println("User1 Type: " + user1.getUserType());
-			System.out.println("User2 Type: " + user2.getUserType());
+            User user1 = new FreeUser(
+                    "john@example.com",
+                    "password123",
+                    "John",
+                    "1234567890");
 
-			// Profile Update
-			user1.setFullName("John Smith");
-			System.out.println("Updated Name: " + user1.getFullName());
+            User user2 = new PremiumUser(
+                    "alice@example.com",
+                    "secure456",
+                    "Alice",
+                    "2345678901");
 
-			//printing all fields.
-			System.out.println(user1.toString());
-			System.out.println(user2.toString());
+            // Authentication
+            Authentication auth = new BasicAuth();
+            BasicAuth basicAuth = (BasicAuth) auth;
 
+            // Register users into auth system
+            basicAuth.registerUser(user1);
+            basicAuth.registerUser(user2);
 
-		} catch (ValidationException e) {
+            // Login attempt
+            Optional<User> loggedInUser =
+                    auth.login("john@example.com", "password123");
 
-			System.out.println("Validation Error: " + e.getMessage());
+            if (loggedInUser.isPresent()) {
+                System.out.println("Login Successful!");
+                System.out.println("Welcome " + loggedInUser.get().getFullName());
+            } else {
+                System.out.println("Invalid Credentials!");
+            }
 
-		} catch (Exception e) {
+            // Logout
+            loggedInUser.ifPresent(user -> auth.logout(user));
 
-			System.out.println("Unexpected Error: " + e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
-

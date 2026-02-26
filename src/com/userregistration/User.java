@@ -1,5 +1,6 @@
 package com.userregistration;
 
+import java.io.FileReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.regex.Pattern;
@@ -9,6 +10,7 @@ public abstract class User {
 	private String email;
 	private String password;
 	private String fullName;
+	
 	
 	@Override
 	public String toString() {
@@ -51,7 +53,7 @@ public abstract class User {
 		validateEmail(email);
 		validatePassword(password);
 		this.email = email;
-		this.password = password;
+		this.password = hashPassword(password);
 		this.fullName = fullName;
 		this.phoneNumber = phoneNumber;
 	}
@@ -84,17 +86,18 @@ public abstract class User {
 			for (byte b : hash) {
 				hexString.append(String.format("%02x", b));
 			}
-
+			
+			
 			return hexString.toString();
-
+			
 		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("Error hashing password", e);
 		}
 	}	
 	// checking password.
 	public boolean checkPassword(String password) {
-		return hashPassword(password)
-				.equals(password);
+		return this.password.equals(hashPassword(password));
+	
 	}
 
 }
