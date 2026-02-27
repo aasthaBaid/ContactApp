@@ -26,12 +26,12 @@ public class SessionManager {
         activeSessions.put(user.getEmail(), session);
         System.out.println("Session created for: " + user.getEmail());
     }
-
+    // destroy the session created for the user
     public void destroySession(User user) {
         activeSessions.remove(user.getEmail());
         System.out.println("Session destroyed for: " + user.getEmail());
     }
-
+    // to check if the user is in active session
     public boolean isLoggedIn(String email) {
         return activeSessions.containsKey(email);
     }
