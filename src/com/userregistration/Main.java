@@ -112,7 +112,9 @@ public class Main {
                 System.out.println("3. Create Contact");
                 System.out.println("4. View Contact");
                 System.out.println("5. Edit Contact");
-                System.out.println("6. Logout");
+                System.out.println("6. Delete Contact");
+
+                System.out.println("7. Logout");
                 System.out.print("Choose option: ");
 
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -215,6 +217,21 @@ public class Main {
                             break;
 
                         case 6:
+                            // Delete contact
+                            System.out.print("Enter Contact ID to delete: ");
+                            String deleteId = scanner.nextLine();
+
+                            System.out.print("Are you sure you want to delete this contact? (y/n): ");
+                            String confirm = scanner.nextLine();
+
+                            if (confirm.equalsIgnoreCase("y")) {
+                                CreateContacts.deleteContact(user.getEmail(), deleteId);
+                            } else {
+                                System.out.println("Deletion cancelled.");
+                            }
+                            break;
+
+                        case 7:
                             // Logout
                             auth.logout(user);
                             loggedInUser = Optional.empty();

@@ -113,67 +113,120 @@ public class CreateContacts {
 		}
 	}
 
-		public static void editContact(String userEmail, String contactId, String newName, String newPhone, String newEmail) {
+	public static void editContact(String userEmail, String contactId, String newName, String newPhone, String newEmail) {
 
-			File inputFile = new File("contacts.txt");
-			File tempFile = new File("contacts_temp.txt");
+		File inputFile = new File("contacts.txt");
+		File tempFile = new File("contacts_temp.txt");
 
-			boolean contactFound = false;
+		boolean contactFound = false;
 
-			try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-					BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
 
-				String line;
+			String line;
 
-				while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 
-					String[] data = line.split(",", 6);
+				String[] data = line.split(",", 6);
 
-					// Ensure correct format
-					if (data.length != 6) {
-						writer.write(line + "\n");
-						continue;
-					}
-
-					// Match contact to edit
-					if (data[0].equals(userEmail) && data[1].equals(contactId)) {
-
-						contactFound = true;
-
-						// Replace fields with new values
-						String updatedLine = userEmail + "," + contactId + "," +
-								(newName.isEmpty() ? data[2] : newName) + "," +
-								(newPhone.isEmpty() ? data[3] : newPhone) + "," +
-								(newEmail.isEmpty() ? data[4] : newEmail) + "," +
-								data[5];
-
-						writer.write(updatedLine + "\n");
-
-					} else {
-						// Keep other lines as-is
-						writer.write(line + "\n");
-					}
+				// Ensure correct format
+				if (data.length != 6) {
+					writer.write(line + "\n");
+					continue;
 				}
 
-				if (!contactFound) {
-					System.out.println("Contact ID not found for this user.");
+				// Match contact to edit
+				if (data[0].equals(userEmail) && data[1].equals(contactId)) {
+
+					contactFound = true;
+
+					// Replace fields with new values
+					String updatedLine = userEmail + "," + contactId + "," +
+							(newName.isEmpty() ? data[2] : newName) + "," +
+							(newPhone.isEmpty() ? data[3] : newPhone) + "," +
+							(newEmail.isEmpty() ? data[4] : newEmail) + "," +
+							data[5];
+
+					writer.write(updatedLine + "\n");
+
 				} else {
-					System.out.println("Contact updated successfully!");
+					// Keep other lines as-is
+					writer.write(line + "\n");
+				}
+			}
+
+			if (!contactFound) {
+				System.out.println("Contact ID not found for this user.");
+			} else {
+				System.out.println("Contact updated successfully!");
+			}
+
+		} catch (Exception e) {
+			System.out.println("Error editing contact: " + e.getMessage());
+			return;
+		}
+
+		// Replace old file with updated file
+		if (!inputFile.delete()) {
+			System.out.println("Could not delete original contacts file.");
+			return;
+		}
+		if (!tempFile.renameTo(inputFile)) {
+			System.out.println("Could not rename temp file.");
+		}
+	}
+	// Delete a contact for a logged-in user
+	public static void deleteContact(String userEmail, String contactId) {
+
+		File inputFile = new File("contacts.txt");
+		File tempFile = new File("contacts_temp.txt");
+
+		boolean contactFound = false;
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+			String line;
+
+			while ((line = reader.readLine()) != null) {
+
+				String[] data = line.split(",", 6);
+
+				// Safety check
+				if (data.length != 6) {
+					writer.write(line + "\n");
+					continue;
 				}
 
-			} catch (Exception e) {
-				System.out.println("Error editing contact: " + e.getMessage());
-				return;
+				// If this is the contact to delete, skip writing it
+				if (data[0].equals(userEmail) && data[1].equals(contactId)) {
+					contactFound = true;
+					// Skip line => deletion
+				} else {
+					writer.write(line + "\n");
+				}
 			}
 
-			// Replace old file with updated file
-			if (!inputFile.delete()) {
-				System.out.println("Could not delete original contacts file.");
-				return;
+			if (!contactFound) {
+				System.out.println("Contact ID not found for this user.");
+			} else {
+				System.out.println("Contact deleted successfully!");
 			}
-			if (!tempFile.renameTo(inputFile)) {
-				System.out.println("Could not rename temp file.");
-			}
-		
+
+		} catch (Exception e) {
+			System.out.println("Error deleting contact: " + e.getMessage());
+			return;
+		}
+
+		// Replace old file with updated file
+		if (!inputFile.delete()) {
+			System.out.println("Could not delete original contacts file.");
+			return;
+		}
+		if (!tempFile.renameTo(inputFile)) {
+			System.out.println("Could not rename temp file.");
+		}
+
 	}
+
 }
