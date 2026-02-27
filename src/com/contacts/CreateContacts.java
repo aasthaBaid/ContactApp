@@ -6,71 +6,109 @@ import java.util.UUID;
 
 public class CreateContacts {
 
-    // Unique ID for each contact
-    private String contactId;
+	// Unique ID for each contact
+	private String contactId;
 
-    private String name;
-    private String phone;
-    private String email;
+	private String name;
+	private String phone;
+	private String email;
 
-    // Time when contact was created
-    private LocalDateTime createdAt;
+	// Time when contact was created
+	private LocalDateTime createdAt;
 
-    public CreateContacts(String name, String phone, String email) {
+	public CreateContacts(String name, String phone, String email) {
 
-        this.contactId = UUID.randomUUID().toString();
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.createdAt = LocalDateTime.now();
-    }
+		this.contactId = UUID.randomUUID().toString();
+		this.name = name;
+		this.phone = phone;
+		this.email = email;
+		this.createdAt = LocalDateTime.now();
+	}
 
-    public String getContactId() {
-        return contactId;
-    }
+	public String getContactId() {
+		return contactId;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getPhone() {
-        return phone;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 
-    // Save contact to file
-    public void saveToFile(String userEmail) {
+	// Save contact to file
+	public void saveToFile(String userEmail) {
 
-        try (java.io.FileWriter writer =
-                     new java.io.FileWriter("contacts.txt", true)) {
+		try (java.io.FileWriter writer =
+				new java.io.FileWriter("contacts.txt", true)) {
 
-            writer.write(userEmail + "," +
-                    contactId + "," +
-                    name + "," +
-                    phone + "," +
-                    email + "," +
-                    createdAt + "\n");
+			writer.write(userEmail + "," +
+					contactId + "," +
+					name + "," +
+					phone + "," +
+					email + "," +
+					createdAt + "\n");
 
-            System.out.println("Contact saved successfully!");
+			System.out.println("Contact saved successfully!");
 
-        } catch (Exception e) {
-            System.out.println("Error saving contact: " + e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			System.out.println("Error saving contact: " + e.getMessage());
+		}
+	}
 
-    @Override
-    public String toString() {
-        return "Contact ID: " + contactId +
-                "\nName: " + name +
-                "\nPhone: " + phone +
-                "\nEmail: " + email +
-                "\nCreated At: " + createdAt;
-    }
+	@Override
+	public String toString() {
+		return "Contact ID: " + contactId +
+				"\nName: " + name +
+				"\nPhone: " + phone +
+				"\nEmail: " + email +
+				"\nCreated At: " + createdAt;
+	}
+
+	// This method shows all contacts of the logged-in user
+	public static void viewUserContacts(String userEmail) {
+
+		try (java.io.BufferedReader reader =
+				new java.io.BufferedReader(new java.io.FileReader("contacts.txt"))) {
+
+			String line;
+			boolean found = false;
+
+			while ((line = reader.readLine()) != null) {
+
+				String[] data = line.split(",", 6); 
+				// 6 because we have 6 fields in file
+
+				// Safety check to avoid errors
+				if (data.length == 6 && data[0].equals(userEmail)) {
+
+					found = true;
+
+					System.out.println("Name: " + data[2]);
+					System.out.println("Phone: " + data[3]);
+					System.out.println("Email: " + data[4]);
+					System.out.println("Created At: " + data[5]);
+				}
+			}
+
+			if (!found) {
+				System.out.println("No contacts found for this user.");
+			}
+
+		} catch (java.io.FileNotFoundException e) {
+			System.out.println("No contacts file found yet.");
+		} catch (Exception e) {
+			System.out.println("Error reading contacts: " + e.getMessage());
+		}
+
+	}
 }

@@ -110,7 +110,8 @@ public class Main {
                 System.out.println("1. View Profile Details");
                 System.out.println("2. Update Profile");
                 System.out.println("3. Create Contact");
-                System.out.println("4. Logout");
+                System.out.println("4. View Contact");
+                System.out.println("5. Logout");
                 System.out.print("Choose option: ");
 
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -191,6 +192,11 @@ public class Main {
                             break;
 
                         case 4:
+                            // View contacts of logged-in user
+                            CreateContacts.viewUserContacts(user.getEmail());
+                            break;
+                            
+                        case 5:
                             // Logout
                             auth.logout(user);
                             loggedInUser = Optional.empty();
