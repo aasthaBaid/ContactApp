@@ -111,7 +111,8 @@ public class Main {
                 System.out.println("2. Update Profile");
                 System.out.println("3. Create Contact");
                 System.out.println("4. View Contact");
-                System.out.println("5. Logout");
+                System.out.println("5. Edit Contact");
+                System.out.println("6. Logout");
                 System.out.print("Choose option: ");
 
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -197,12 +198,28 @@ public class Main {
                             break;
                             
                         case 5:
+                            // Edit contact
+                            System.out.print("Enter Contact ID to edit: ");
+                            String contactId = scanner.nextLine();
+
+                            System.out.print("Enter New Name (leave blank to keep unchanged): ");
+                            String newName = scanner.nextLine();
+
+                            System.out.print("Enter New Phone (leave blank to keep unchanged): ");
+                            String newPhone = scanner.nextLine();
+
+                            System.out.print("Enter New Email (leave blank to keep unchanged): ");
+                            String newEmail = scanner.nextLine();
+
+                            CreateContacts.editContact(user.getEmail(), contactId, newName, newPhone, newEmail);
+                            break;
+
+                        case 6:
                             // Logout
                             auth.logout(user);
                             loggedInUser = Optional.empty();
                             System.out.println("Logged out successfully.");
                             break;
-
                         default:
                             System.out.println("Invalid choice!");
                     }

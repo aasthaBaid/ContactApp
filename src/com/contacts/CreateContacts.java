@@ -1,6 +1,9 @@
 package com.contacts;
 
 
+import java.io.*;
+import java.io.FileReader;
+import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -8,7 +11,6 @@ public class CreateContacts {
 
 	// Unique ID for each contact
 	private String contactId;
-
 	private String name;
 	private String phone;
 	private String email;
@@ -109,6 +111,69 @@ public class CreateContacts {
 		} catch (Exception e) {
 			System.out.println("Error reading contacts: " + e.getMessage());
 		}
+	}
 
+		public static void editContact(String userEmail, String contactId, String newName, String newPhone, String newEmail) {
+
+			File inputFile = new File("contacts.txt");
+			File tempFile = new File("contacts_temp.txt");
+
+			boolean contactFound = false;
+
+			try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+					BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+				String line;
+
+				while ((line = reader.readLine()) != null) {
+
+					String[] data = line.split(",", 6);
+
+					// Ensure correct format
+					if (data.length != 6) {
+						writer.write(line + "\n");
+						continue;
+					}
+
+					// Match contact to edit
+					if (data[0].equals(userEmail) && data[1].equals(contactId)) {
+
+						contactFound = true;
+
+						// Replace fields with new values
+						String updatedLine = userEmail + "," + contactId + "," +
+								(newName.isEmpty() ? data[2] : newName) + "," +
+								(newPhone.isEmpty() ? data[3] : newPhone) + "," +
+								(newEmail.isEmpty() ? data[4] : newEmail) + "," +
+								data[5];
+
+						writer.write(updatedLine + "\n");
+
+					} else {
+						// Keep other lines as-is
+						writer.write(line + "\n");
+					}
+				}
+
+				if (!contactFound) {
+					System.out.println("Contact ID not found for this user.");
+				} else {
+					System.out.println("Contact updated successfully!");
+				}
+
+			} catch (Exception e) {
+				System.out.println("Error editing contact: " + e.getMessage());
+				return;
+			}
+
+			// Replace old file with updated file
+			if (!inputFile.delete()) {
+				System.out.println("Could not delete original contacts file.");
+				return;
+			}
+			if (!tempFile.renameTo(inputFile)) {
+				System.out.println("Could not rename temp file.");
+			}
+		
 	}
 }
