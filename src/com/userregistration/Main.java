@@ -6,6 +6,8 @@ import com.userauthentication.Authentication;
 import com.userauthentication.BasicAuth;
 import com.userprofile.UserProfileManager;
 import com.contacts.CreateContacts;
+import com.search.ContactFilterService;
+import com.search.FilterService;
 import com.search.SearchService;
 import com.search.UserSearchService;
 
@@ -117,6 +119,7 @@ public class Main {
 				System.out.println("7. Logout");
 				System.out.println("8. Bulk Operations");
 				System.out.println("9. Search");
+				System.out.println("10. Filter Users");
 				System.out.print("Choose option: ");
 
 				int choice = Integer.parseInt(scanner.nextLine());
@@ -314,6 +317,62 @@ public class Main {
 						}
 
 						break;
+					case 10:
+
+					    System.out.println("Filter By:");
+					    System.out.println("1. User Type");
+					    System.out.println("2. Sort by Name (A-Z)");
+					    System.out.println("3. Phone Contains");
+					    System.out.println("4. Email Contains");
+					    System.out.print("Choose option: ");
+
+					    int filterChoice = Integer.parseInt(scanner.nextLine());
+					    String filterType = "";
+					    String value = "";
+
+					    switch (filterChoice) {
+					        case 1:
+					            filterType = "type";
+					            System.out.print("Enter User Type (Free User / Premium User): ");
+					            value = scanner.nextLine();
+					            break;
+
+					        case 2:
+					            filterType = "name";
+					            break;
+
+					        case 3:
+					            filterType = "phone";
+					            System.out.print("Enter phone keyword: ");
+					            value = scanner.nextLine();
+					            break;
+
+					        case 4:
+					            filterType = "email";
+					            System.out.print("Enter email keyword: ");
+					            value = scanner.nextLine();
+					            break;
+
+					        default:
+					            System.out.println("Invalid filter option.");
+					    }
+
+					    if (!filterType.isEmpty()) {
+
+					        FilterService<User> filterService = new ContactFilterService();
+					        List<User> filteredUsers = filterService.filter(null, filterType, value);
+
+					        if (filteredUsers.isEmpty()) {
+					            System.out.println("No users found.");
+					        } else {
+					            System.out.println("\nFiltered Results:");
+					            for (User u : filteredUsers) {
+					                System.out.println(u);
+					            }
+					        }
+					    }
+
+					    break;
 					default:
 
 						System.out.println("Invalid choice!");
