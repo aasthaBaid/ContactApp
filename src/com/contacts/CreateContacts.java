@@ -347,4 +347,126 @@ public class CreateContacts {
 	        System.out.println("Error exporting contacts: " + e.getMessage());
 	    }
 	}
+	public static void addTagToContact(String userEmail, String contactId, String tagName) {
+
+	    File inputFile = new File("contacts.txt");
+	    File tempFile = new File("contacts_temp.txt");
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+	        String line;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            String[] data = line.split(",", 7);
+
+	            if (data.length < 7) {
+	                writer.write(line + "\n");
+	                continue;
+	            }
+
+	            if (data[0].equals(userEmail) && data[1].equals(contactId)) {
+
+	                Set<Tag> tagSet = new HashSet<>();
+
+	                if (!data[6].isEmpty()) {
+	                    String[] existing = data[6].split("\\|");
+	                    for (String t : existing) {
+	                        tagSet.add(new Tag(t));
+	                    }
+	                }
+
+	                tagSet.add(new Tag(tagName));
+
+	                StringBuilder updatedTags = new StringBuilder();
+	                for (Tag t : tagSet) {
+	                    if (updatedTags.length() > 0) {
+	                        updatedTags.append("|");
+	                    }
+	                    updatedTags.append(t.getName());
+	                }
+
+	                String updatedLine = data[0] + "," + data[1] + "," +
+	                        data[2] + "," + data[3] + "," +
+	                        data[4] + "," + data[5] + "," + updatedTags;
+
+	                writer.write(updatedLine + "\n");
+
+	            } else {
+	                writer.write(line + "\n");
+	            }
+	        }
+
+	        System.out.println("Tag added successfully.");
+
+	    } catch (Exception e) {
+	        System.out.println("Error adding tag: " + e.getMessage());
+	        return;
+	    }
+
+	    inputFile.delete();
+	    tempFile.renameTo(inputFile);
+	}
+	public static void removeTagFromContact(String userEmail, String contactId, String tagName) {
+
+	    File inputFile = new File("contacts.txt");
+	    File tempFile = new File("contacts_temp.txt");
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+	        String line;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            String[] data = line.split(",", 7);
+
+	            if (data.length < 7) {
+	                writer.write(line + "\n");
+	                continue;
+	            }
+
+	            if (data[0].equals(userEmail) && data[1].equals(contactId)) {
+
+	                Set<Tag> tagSet = new HashSet<>();
+
+	                if (!data[6].isEmpty()) {
+	                    String[] existing = data[6].split("\\|");
+	                    for (String t : existing) {
+	                        tagSet.add(new Tag(t));
+	                    }
+	                }
+
+	                tagSet.remove(new Tag(tagName));
+
+	                StringBuilder updatedTags = new StringBuilder();
+	                for (Tag t : tagSet) {
+	                    if (updatedTags.length() > 0) {
+	                        updatedTags.append("|");
+	                    }
+	                    updatedTags.append(t.getName());
+	                }
+
+	                String updatedLine = data[0] + "," + data[1] + "," +
+	                        data[2] + "," + data[3] + "," +
+	                        data[4] + "," + data[5] + "," + updatedTags;
+
+	                writer.write(updatedLine + "\n");
+
+	            } else {
+	                writer.write(line + "\n");
+	            }
+	        }
+
+	        System.out.println("Tag removed successfully.");
+
+	    } catch (Exception e) {
+	        System.out.println("Error removing tag: " + e.getMessage());
+	        return;
+	    }
+
+	    inputFile.delete();
+	    tempFile.renameTo(inputFile);
+	}
 }

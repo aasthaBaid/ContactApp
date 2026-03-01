@@ -109,65 +109,68 @@ public abstract class User {
 	}
 
 	
-	// ----- File Persistence -----
 	public void saveToFile() throws ValidationException {
-		try {
-			// Load all existing users to avoid duplicates
-			List<User> users = loadUsersFromFile();
 
-			// Remove this user if already exists (update)
-			users.removeIf(u -> u.getEmail().equals(this.email));
-			users.add(this);
+        try {
+            List<User> users = loadUsersFromFile();
+            users.removeIf(u -> u.getEmail().equals(this.email));
+            users.add(this);
 
-			// Write all users back to file
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
-				for (User u : users) {
-					String data = u.getEmail() + "," +
-							u.getPassword() + "," +
-							u.getFullName() + "," +
-							u.getPhoneNumber() + "," +
-							u.getUserType();
-					writer.write(data);
-					writer.newLine();
-				}
-			}
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+                for (User u : users) {
+                    writer.write(u.getEmail() + "," +
+                            u.getPassword() + "," +
+                            u.getFullName() + "," +
+                            u.getPhoneNumber() + "," +
+                            u.getUserType());
+                    writer.newLine();
+                }
+            }
 
-		} catch (IOException e) {
-			System.out.println("Error saving user: " + e.getMessage());
-		}
-	}
+        } catch (IOException e) {
+            System.out.println("Error saving user: " + e.getMessage());
+        }
+    }
 
 	public static List<User> loadUsersFromFile() throws ValidationException {
-		List<User> users = new ArrayList<>();
+	    List<User> users = new ArrayList<>();
 
-		File file = new File(FILE_NAME);
-		if (!file.exists()) return users;
+	    File file = new File(FILE_NAME);
+	    if (!file.exists()) return users;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(",");
-				String email = parts[0];
-				String hashedPassword = parts[1];
-				String fullName = parts[2];
-				String phone = parts[3];
-				String userType = parts[4];
+	    try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))) {
 
-				User user;
-				if (userType.equals("Premium User")) {
-					user = new PremiumUser(email, hashedPassword, fullName, phone, true);
-				} else {
-					user = new FreeUser(email, hashedPassword, fullName, phone, true);
-				}
+	        String line;
 
-				users.add(user);
-			}
+	        while ((line = reader.readLine()) != null) {
 
-		} catch (IOException e) {
-			System.out.println("Error loading users: " + e.getMessage());
-		}
+	            String[] parts = line.split(",");
 
-		return users;
+	            // Safety check
+	            if (parts.length != 5) continue;
+
+	            String email = parts[0];
+	            String hashedPassword = parts[1];
+	            String fullName = parts[2];
+	            String phone = parts[3];
+	            String userType = parts[4];
+
+	            User user;
+
+	            if (userType.equals("Premium User")) {
+	                user = new PremiumUser(email, hashedPassword, fullName, phone, true);
+	            } else {
+	                user = new FreeUser(email, hashedPassword, fullName, phone, true);
+	            }
+
+	            users.add(user);
+	        }
+
+	    } catch (IOException e) {
+	        System.out.println("Error loading users: " + e.getMessage());
+	    }
+
+	    return users;
 	}
 
 	@Override

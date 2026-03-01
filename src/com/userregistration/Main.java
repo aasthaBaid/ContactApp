@@ -120,6 +120,7 @@ public class Main {
 				System.out.println("8. Bulk Operations");
 				System.out.println("9. Search");
 				System.out.println("10. Filter Users");
+				System.out.println("11. Manage Tags");
 				System.out.print("Choose option: ");
 
 				int choice = Integer.parseInt(scanner.nextLine());
@@ -370,6 +371,31 @@ public class Main {
 					                System.out.println(u);
 					            }
 					        }
+					    }
+
+					    break;
+					case 11:
+
+					    System.out.println("1. Add Tag to Contact");
+					    System.out.println("2. Remove Tag from Contact");
+					    System.out.print("Choose option: ");
+
+					    int tagChoice = Integer.parseInt(scanner.nextLine());
+
+					    System.out.print("Enter Contact ID: ");
+					    String tagContactId = scanner.nextLine();
+
+					    System.out.print("Enter Tag Name: ");
+					    String tagName = scanner.nextLine();
+
+					    if (tagChoice == 1) {
+					        CreateContacts.addTagToContact(user.getEmail(), tagContactId, tagName);
+					    } 
+					    else if (tagChoice == 2) {
+					        CreateContacts.removeTagFromContact(user.getEmail(), tagContactId, tagName);
+					    } 
+					    else {
+					        System.out.println("Invalid option.");
 					    }
 
 					    break;
