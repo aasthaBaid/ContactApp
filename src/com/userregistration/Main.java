@@ -121,6 +121,7 @@ public class Main {
 				System.out.println("9. Search");
 				System.out.println("10. Filter Users");
 				System.out.println("11. Manage Tags");
+				System.out.println("12. Apply Multiple Tags");
 				System.out.print("Choose option: ");
 
 				int choice = Integer.parseInt(scanner.nextLine());
@@ -388,12 +389,41 @@ public class Main {
 					    System.out.print("Enter Tag Name: ");
 					    String tagName = scanner.nextLine();
 
+					    List<String> singleTagList = Arrays.asList(tagName);
+
 					    if (tagChoice == 1) {
-					        CreateContacts.addTagToContact(user.getEmail(), tagContactId, tagName);
+					        CreateContacts.addTagsToContact(user.getEmail(), tagContactId, singleTagList);
 					    } 
 					    else if (tagChoice == 2) {
-					        CreateContacts.removeTagFromContact(user.getEmail(), tagContactId, tagName);
+					        CreateContacts.removeTagsFromContact(user.getEmail(), tagContactId, singleTagList);
 					    } 
+					    else {
+					        System.out.println("Invalid option.");
+					    }
+
+					    break;
+					case 12:
+
+					    System.out.println("1. Add Multiple Tags");
+					    System.out.println("2. Remove Multiple Tags");
+					    System.out.print("Choose option: ");
+
+					    int tagOption = Integer.parseInt(scanner.nextLine());
+
+					    System.out.print("Enter Contact ID: ");
+					    String contactId1 = scanner.nextLine();
+
+					    System.out.print("Enter tags separated by comma: ");
+					    String tagsInput = scanner.nextLine();
+
+					    List<String> tagList = Arrays.asList(tagsInput.split(","));
+
+					    if (tagOption == 1) {
+					        CreateContacts.addTagsToContact(user.getEmail(), contactId1, tagList);
+					    }
+					    else if (tagOption == 2) {
+					        CreateContacts.removeTagsFromContact(user.getEmail(), contactId1, tagList);
+					    }
 					    else {
 					        System.out.println("Invalid option.");
 					    }

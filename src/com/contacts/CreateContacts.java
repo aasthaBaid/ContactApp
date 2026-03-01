@@ -99,6 +99,7 @@ public class CreateContacts {
 					System.out.println("Name: " + data[2]);
 					System.out.println("Phone: " + data[3]);
 					System.out.println("Email: " + data[4]);
+					
 					System.out.println("Created At: " + data[5]);
 				}
 			}
@@ -347,7 +348,7 @@ public class CreateContacts {
 	        System.out.println("Error exporting contacts: " + e.getMessage());
 	    }
 	}
-	public static void addTagToContact(String userEmail, String contactId, String tagName) {
+	public static void addTagsToContact(String userEmail, String contactId, List<String> tagNames) {
 
 	    File inputFile = new File("contacts.txt");
 	    File tempFile = new File("contacts_temp.txt");
@@ -370,6 +371,7 @@ public class CreateContacts {
 
 	                Set<Tag> tagSet = new HashSet<>();
 
+	                // Load existing tags
 	                if (!data[6].isEmpty()) {
 	                    String[] existing = data[6].split("\\|");
 	                    for (String t : existing) {
@@ -377,8 +379,12 @@ public class CreateContacts {
 	                    }
 	                }
 
-	                tagSet.add(new Tag(tagName));
+	                // Add new tags
+	                for (String tagName : tagNames) {
+	                    tagSet.add(new Tag(tagName));
+	                }
 
+	                // Convert Set back to string
 	                StringBuilder updatedTags = new StringBuilder();
 	                for (Tag t : tagSet) {
 	                    if (updatedTags.length() > 0) {
@@ -398,17 +404,17 @@ public class CreateContacts {
 	            }
 	        }
 
-	        System.out.println("Tag added successfully.");
+	        System.out.println("Tags applied successfully.");
 
 	    } catch (Exception e) {
-	        System.out.println("Error adding tag: " + e.getMessage());
+	        System.out.println("Error applying tags: " + e.getMessage());
 	        return;
 	    }
 
 	    inputFile.delete();
 	    tempFile.renameTo(inputFile);
 	}
-	public static void removeTagFromContact(String userEmail, String contactId, String tagName) {
+	public static void removeTagsFromContact(String userEmail, String contactId, List<String> tagNames) {
 
 	    File inputFile = new File("contacts.txt");
 	    File tempFile = new File("contacts_temp.txt");
@@ -438,7 +444,9 @@ public class CreateContacts {
 	                    }
 	                }
 
-	                tagSet.remove(new Tag(tagName));
+	                for (String tagName : tagNames) {
+	                    tagSet.remove(new Tag(tagName));
+	                }
 
 	                StringBuilder updatedTags = new StringBuilder();
 	                for (Tag t : tagSet) {
@@ -459,10 +467,10 @@ public class CreateContacts {
 	            }
 	        }
 
-	        System.out.println("Tag removed successfully.");
+	        System.out.println("Tags removed successfully.");
 
 	    } catch (Exception e) {
-	        System.out.println("Error removing tag: " + e.getMessage());
+	        System.out.println("Error removing tags: " + e.getMessage());
 	        return;
 	    }
 
