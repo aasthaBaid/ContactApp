@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.security.PublicKey;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.*;
 
 public class CreateContacts {
 
@@ -189,9 +190,7 @@ public class CreateContacts {
 			String line;
 
 			while ((line = reader.readLine()) != null) {
-
 				String[] data = line.split(",", 6);
-
 				// Safety check
 				if (data.length != 6) {
 					writer.write(line + "\n");
@@ -228,5 +227,124 @@ public class CreateContacts {
 		}
 
 	}
+	
+	public static void bulkDeleteContacts(String userEmail, List<String> contactIds) {
 
+	    File inputFile = new File("contacts.txt");
+	    File tempFile = new File("contacts_temp.txt");
+
+	    Set<String> idSet = new HashSet<>(contactIds);  // faster lookup
+	    boolean anyDeleted = false;
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+	        String line;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            String[] data = line.split(",", 6);
+
+	            if (data.length != 6) {
+	                writer.write(line + "\n");
+	                continue;
+	            }
+
+	            if (data[0].equals(userEmail) && idSet.contains(data[1])) {
+	                anyDeleted = true;
+	                continue;  // skip writing => delete
+	            }
+
+	            writer.write(line + "\n");
+	        }
+
+	        if (anyDeleted) {
+	            System.out.println("Selected contacts deleted successfully.");
+	        } else {
+	            System.out.println("No matching contacts found.");
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println("Error during bulk delete: " + e.getMessage());
+	        return;
+	    }
+
+	    inputFile.delete();
+	    tempFile.renameTo(inputFile);
+	}
+	
+	public static void bulkTagContacts(String userEmail, List<String> contactIds, String tag) {
+
+	    File inputFile = new File("contacts.txt");
+	    File tempFile = new File("contacts_temp.txt");
+
+	    Set<String> idSet = new HashSet<>(contactIds);
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+	         BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+	        String line;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            String[] data = line.split(",", 7);
+
+	            if (data.length < 6) {
+	                writer.write(line + "\n");
+	                continue;
+	            }
+
+	            if (data[0].equals(userEmail) && idSet.contains(data[1])) {
+
+	                String updatedLine = data[0] + "," + data[1] + "," +
+	                        data[2] + "," + data[3] + "," +
+	                        data[4] + "," + data[5] + "," + tag;
+
+	                writer.write(updatedLine + "\n");
+
+	            } else {
+	                writer.write(line + "\n");
+	            }
+	        }
+
+	        System.out.println("Tag added to selected contacts.");
+
+	    } catch (Exception e) {
+	        System.out.println("Error tagging contacts: " + e.getMessage());
+	        return;
+	    }
+
+	    inputFile.delete();
+	    tempFile.renameTo(inputFile);
+	}
+
+	public static void exportContacts(String userEmail) {
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader("contacts.txt"));
+	         BufferedWriter writer = new BufferedWriter(
+	                 new FileWriter(userEmail + "_contacts_export.txt"))) {
+
+	        String line;
+	        boolean found = false;
+
+	        while ((line = reader.readLine()) != null) {
+
+	            String[] data = line.split(",", 7);
+
+	            if (data.length >= 6 && data[0].equals(userEmail)) {
+	                writer.write(line + "\n");
+	                found = true;
+	            }
+	        }
+
+	        if (found) {
+	            System.out.println("Contacts exported successfully.");
+	        } else {
+	            System.out.println("No contacts found to export.");
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println("Error exporting contacts: " + e.getMessage());
+	    }
+	}
 }

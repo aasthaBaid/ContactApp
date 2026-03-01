@@ -1,8 +1,7 @@
 package com.userregistration;
 
-import java.util.Optional;
-import java.util.Scanner;
-
+import java.util.*;
+import java.io.*;
 import com.userauthentication.Authentication;
 import com.userauthentication.BasicAuth;
 import com.userprofile.UserProfileManager;
@@ -113,8 +112,8 @@ public class Main {
                 System.out.println("4. View Contact");
                 System.out.println("5. Edit Contact");
                 System.out.println("6. Delete Contact");
-
                 System.out.println("7. Logout");
+                System.out.println("8. Bulk Operations");
                 System.out.print("Choose option: ");
 
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -236,6 +235,43 @@ public class Main {
                             auth.logout(user);
                             loggedInUser = Optional.empty();
                             System.out.println("Logged out successfully.");
+                            break;
+                        case 8:
+
+                            System.out.println("1. Bulk Delete");
+                            System.out.println("2. Bulk Tag");
+                            System.out.println("3. Export Contacts");
+                            System.out.print("Choose option: ");
+
+                            int bulkChoice = Integer.parseInt(scanner.nextLine());
+
+                            switch (bulkChoice) {
+
+                                case 1:
+                                    System.out.println("Enter Contact IDs separated by comma:");
+                                    String idsInput = scanner.nextLine();
+                                    List<String> idsToDelete = Arrays.asList(idsInput.split(","));
+                                    CreateContacts.bulkDeleteContacts(user.getEmail(), idsToDelete);
+                                    break;
+
+                                case 2:
+                                    System.out.println("Enter Contact IDs separated by comma:");
+                                    String idsTagInput = scanner.nextLine();
+                                    List<String> idsToTag = Arrays.asList(idsTagInput.split(","));
+
+                                    System.out.print("Enter Tag: ");
+                                    String tag = scanner.nextLine();
+
+                                    CreateContacts.bulkTagContacts(user.getEmail(), idsToTag, tag);
+                                    break;
+
+                                case 3:
+                                    CreateContacts.exportContacts(user.getEmail());
+                                    break;
+
+                                default:
+                                    System.out.println("Invalid bulk option.");
+                            }
                             break;
                         default:
                             System.out.println("Invalid choice!");
